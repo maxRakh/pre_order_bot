@@ -1,0 +1,33 @@
+services:
+  web-app:
+    build:
+      context: ./service
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./service:/service
+    environment:
+      - DB_HOST=database
+      - DB_NAME=dbname
+      - DB_USER=dbuser
+      - DB_PASS=dbpass
+    command: python manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - database
+
+  database:
+    image: postgres:14.6-alpine
+    environment:
+      - POSTGRES_DB=dbname
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=dbpass
+    ports:
+      - "5433:5432"
+
+  bot:
+    build:
+      context: ./bot
+    volumes:
+      - ./bot:/bot
+    depends_on:
+      - web-app

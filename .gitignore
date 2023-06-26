@@ -1,0 +1,37 @@
+.idea
+config.py
+.venv
+venv/
+migrations/
+.DS_Store
+bot/.DS_Store
+service/__pycache__/
+
+# Игнорирование временных файлов и папок
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.swp
+*.swo
+*.bak
+*.~
+*.pyc
+*.db
+
+# Игнорирование сгенерированных файлов и папок
+*.pyc
+*.class
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+*.egg-info
+.htmlcov/
+.coverage
+.env
+
+# Игнорирование локальной конфигурации
+*.env
+*.env.*

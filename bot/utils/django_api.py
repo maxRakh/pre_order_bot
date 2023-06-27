@@ -1,8 +1,14 @@
+import codecs
+import csv
+import io
+import json
+
 import requests
 from datetime import datetime
+from typing import Optional, Any
 
 
-def format_date(date_string):
+def format_date(date_string: str) -> str:
     if date_string:
         date = datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%S.%fZ")
         formated_date = date.strftime("%d-%m-%Y")
@@ -12,10 +18,11 @@ def format_date(date_string):
 
 
 class WebAppAPI:
-    def __init__(self, base_url):
+    def __init__(self, base_url: str) -> None:
         self.base_url = base_url
 
-    def get_all_data(self, endpoint, page_number=None, page_size=None, bought=None, canceled=None):
+    def get_all_data(self, endpoint: str, page_number: Optional[int] = None, page_size: Optional[int] = None,
+                     bought: Optional[bool] = None, canceled: Optional[bool] = None):
         url = f"{self.base_url}/{endpoint}"
 
         params = {}
@@ -74,7 +81,35 @@ class WebAppAPI:
         except requests.exceptions.RequestException as ex:
             print(f"Проблема с получением данных: {ex}")
 
-    def post_data(self, endpoint, data):
+    def export_csv(self, endpoint: str) -> Optional[str]:
+        url = f"{self.base_url}/{endpoint}"
+        headers = ['№ п/п', 'Номер заказ', 'Продукт', 'Цвет', 'Размер', 'Количество', 'Цена', 'Город', 'Адрес доставки',
+                       'Цена доставки', 'Имя клиента', 'Номер телефона', 'Тип связи', 'Дата заказа', 'Предзаказ Выкуплен',
+                       'Дата выкупа', 'Предзаказ отменен', 'Дата отмены']
+        try:
+            response = requests.get(url=url)
+            if response.status_code == 200:
+                data = response.json()
+                filename = f'preorders_{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.csv'
+
+                with open(filename, 'w', encoding='utf-8') as output:
+                    writer = csv.writer(output, delimiter=';')
+                    writer.writerow(headers)
+
+                    for item in data.get('results'):
+                        row = [item['id'], item['number'], item['product'], item['color'], item['size'],
+                               item['quantity'], item['price'], item['city'], item['shipping_adress'],
+                               item['shipping_price'], item['client_name'], item['client_phone_number'],
+                               item['type_of_connect'], item['date_ordered'], item['bought'],
+                               item['day_of_bought'], item['canceled'], item['day_of_canceled']]
+                        writer.writerow(row)
+
+                return filename
+
+        except requests.exceptions.RequestException as ex:
+            print(f"Проблема с получением данных: {ex}")
+
+    def post_data(self, endpoint: str, data: Any) -> Optional[dict]:
         url = f"{self.base_url}/{endpoint}"
 
         try:
@@ -84,7 +119,7 @@ class WebAppAPI:
         except requests.exceptions.RequestException as ex:
             print(f"Проблема с внесением данных: {ex}")
 
-    def update_data(self, endpoint, data):
+    def update_data(self, endpoint: str, data: Any) -> Optional[dict]:
         url = f"{self.base_url}/{endpoint}"
 
         try:
@@ -94,7 +129,7 @@ class WebAppAPI:
         except requests.exceptions.RequestException as ex:
             print(f"Проблема с изменением данных: {ex}")
 
-    def delete_data(self, endpoint):
+    def delete_data(self, endpoint: str) -> Optional[bool]:
         url = f"{self.base_url}/{endpoint}"
 
         try:

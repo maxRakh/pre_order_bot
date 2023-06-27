@@ -1,9 +1,5 @@
-import csv
-import io
 import os
-from datetime import datetime
 
-import requests
 from aiogram import Bot, Dispatcher, types, executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher.filters import Text

@@ -1,5 +1,7 @@
 from datetime import datetime
 
+# import openpyxl
+# from excel_response import ExcelResponse
 from rest_framework import status, pagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -19,7 +21,7 @@ class PreOrderAPIView(ModelViewSet):
     serializer_class = PreOrderSerializer
     pagination_class = PreOrderPagination
 
-    def get_queryset(self):
+    def get_queryset(self) -> queryset:
         queryset = super().get_queryset()
 
         bought = self.request.query_params.get('bought')
@@ -36,7 +38,7 @@ class PreOrderAPIView(ModelViewSet):
 
         return queryset
 
-    def update(self, request, *args, **kwargs):
+    def update(self, request, *args, **kwargs) -> Response:
         instance = self.get_object()
         bought = request.data.get('bought', instance.bought)
         canceled = request.data.get('canceled', instance.canceled)

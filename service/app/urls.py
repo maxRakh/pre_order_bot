@@ -25,6 +25,6 @@ urlpatterns = [
 ]
 
 router = routers.DefaultRouter()
-router.register(r'api/v1/preorder', PreOrderAPIView)
+router.register(r'api/v1/preorders', PreOrderAPIView)
 
 urlpatterns += router.urls

@@ -26,6 +26,7 @@ class PreOrderAPIView(ModelViewSet):
 
         bought = self.request.query_params.get('bought')
         canceled = self.request.query_params.get('canceled')
+        product = self.request.query_params.get('product')
 
         if bought is not None:
             bought = bought.lower() == 'true'
@@ -33,6 +34,8 @@ class PreOrderAPIView(ModelViewSet):
         if canceled is not None:
             canceled = canceled.lower() == 'true'
             queryset = queryset.filter(canceled=canceled)
+        if product is not None:
+            queryset = queryset.filter(product=product)
 
         queryset = queryset.order_by('date_ordered')
 

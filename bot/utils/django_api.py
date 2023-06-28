@@ -19,7 +19,7 @@ class WebAppAPI:
         self.base_url = base_url
 
     def get_all_data(self, endpoint: str, page_number: Optional[int] = None, page_size: Optional[int] = None,
-                     bought: Optional[bool] = None, canceled: Optional[bool] = None):
+                     bought: Optional[bool] = None, canceled: Optional[bool] = None, product: Optional[str] = None):
         url = f"{self.base_url}/{endpoint}"
 
         params = {}
@@ -44,6 +44,10 @@ class WebAppAPI:
         if canceled is None and bought is None:
             info_text = ' '
 
+        if product is not None:
+            params['product'] = product
+            info_text = f' для товара {product} '
+
         try:
             response = requests.get(url, params=params)
             if response.status_code == 200:
@@ -65,7 +69,7 @@ class WebAppAPI:
                     response_text += f"ID: {i['id']} ,Номер заказа Tilda: {i['number']}\nДата заказа: {date_ordered}\n" \
                               f"Товар: {i['product']} {i['color']} {i['size']} - {i['quantity']} шт. - {i['price']} р.\n" \
                               f"Адрес доставки: {i['city']}, {i['shipping_adress']}\n" \
-                              f"Цена доставки: {'shipping_price'}\nИмя: {i['client_name']}\n" \
+                              f"Цена доставки: {i['shipping_price']}\nИмя: {i['client_name']}\n" \
                               f"Телефон: {i['client_phone_number']}, Вид связи: {i['type_of_connect']}\n" \
                               f"Куплен: {'Да' if i['bought'] == True else 'Нет'}, " \
                               f"Дата продажи: {date_of_bought}\n" \

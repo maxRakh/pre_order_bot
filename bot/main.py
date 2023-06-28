@@ -7,7 +7,7 @@ from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.types import ReplyKeyboardMarkup
 
-from keyboard import get_all_preorders_menu
+from keyboard import get_all_preorders_menu, get_selected_product_preorders_menu
 from config import bot_token, users
 from utils.django_api import WebAppAPI
 
@@ -260,6 +260,35 @@ async def process_type_of_connect(message: types.Message, state: FSMContext):
     response = api.post_data('preorders', data)
 
     await message.reply(f'Запись успешно внесена! {response}', reply_markup=keyboard)
+
+
+@dp.message_handler(Text(equals="Предазказы вида товара"))
+async def get_preorders(message: types.Message) -> None:
+    if message.from_user.id in users:
+        preorders_product_menu = get_selected_product_preorders_menu()
+        await message.answer("Предзаказы какого товара выгрузить?", reply_markup=preorders_product_menu)
+    else:
+        await message.answer("Извините, но у вас нет доступа к боту.")
+
+
+@dp.callback_query_handler(lambda callback_query: callback_query.data.startswith('select_'))
+async def inline_keyboard_select_product_preorders_buttons(callback: types.CallbackQuery) -> None:
+    api = WebAppAPI("http://web-app:8000/api/v1")
+    page_number = 1
+    page_size = 10
+
+    select_product = callback.data.split('_')[1]
+
+    data = api.get_all_data("preorders", page_number=page_number, page_size=page_size, product=select_product)
+
+    results = data['response_text']
+    pages = data['pages']
+
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+    page_buttons = [str(page_num) for page_num in range(1, pages + 1)]
+    keyboard.add(*page_buttons)
+
+    await callback.message.answer(results, reply_markup=keyboard)
 
 
 if __name__ == '__main__':

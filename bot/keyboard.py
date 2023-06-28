@@ -10,3 +10,12 @@ def get_all_preorders_menu():
 
     return preorders_menu_keyboard
 
+
+def get_selected_product_preorders_menu():
+    product_selected_preorders_menu = InlineKeyboardMarkup()
+    list_products = ['Телогрейка', 'Жилетка', 'Пальто', 'Парка', 'Пальто зимнее', 'Шуба', 'Рубашка', 'Штаны', 'Пиждак']
+
+    for product in list_products:
+        product_selected_preorders_menu.insert(InlineKeyboardButton(text=product, callback_data=f'select_{product}'))
+
+    return product_selected_preorders_menu

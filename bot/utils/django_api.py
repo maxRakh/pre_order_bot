@@ -107,14 +107,47 @@ class WebAppAPI:
             print(f"Проблема с получением данных: {ex}")
 
     def post_data(self, endpoint: str, data: Any) -> Optional[dict]:
-        url = f"{self.base_url}/{endpoint}"
+        url = f"{self.base_url}/{endpoint}/"
+
+        number = data.get('number')
+        product = data.get('product')
+        color = data.get('color')
+        size = data.get('size')
+        quantity = data.get('quantity')
+        price = data.get('price')
+        city = data.get('city')
+        shipping_adress = data.get('shipping_adress')
+        shipping_price = data.get('shipping_price')
+        client_name = data.get('client_name')
+        client_phone_number = data.get('client_phone_number')
+        type_of_connect = data.get('type_of_connect')
+
+        result_data = {
+            'number': number,
+            'product': product,
+            'color': color,
+            'size': size,
+            'quantity': quantity,
+            'price': price,
+            'city': city,
+            'shipping_adress': shipping_adress,
+            'shipping_price': shipping_price,
+            'client_name': client_name,
+            'client_phone_number': client_phone_number,
+            'type_of_connect': type_of_connect,
+            "bought": False,
+            "day_of_bought": None,
+            "canceled": False,
+            "day_of_canceled": None,
+        }
 
         try:
-            response = requests.post(url, json=data)
+            response = requests.post(url, json=result_data)
             if response.status_code == 201:
                 return response.json()
         except requests.exceptions.RequestException as ex:
             print(f"Проблема с внесением данных: {ex}")
+            return f'{result_data}\n{ex}'
 
     def update_data(self, endpoint: str, data: Any) -> Optional[dict]:
         url = f"{self.base_url}/{endpoint}"

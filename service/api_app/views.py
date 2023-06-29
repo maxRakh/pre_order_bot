@@ -43,6 +43,14 @@ class PreOrderAPIView(ModelViewSet):
 
     def update(self, request, *args, **kwargs) -> Response:
         instance = self.get_object()
+
+        fields_to_update = ['product', 'color', 'size', 'quantity', 'price', 'city', 'shipping_adress', 'shipping_price',
+                            'client_name', 'client_phone_number', 'type_of_connect', 'bought', 'canceled']
+
+        for field in fields_to_update:
+            if field in request.data:
+                setattr(instance, field, request.data[field])
+
         bought = request.data.get('bought', instance.bought)
         canceled = request.data.get('canceled', instance.canceled)
 

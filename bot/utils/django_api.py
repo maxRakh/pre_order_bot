@@ -79,6 +79,16 @@ class WebAppAPI:
                 response_text += f"{'=' * 30}\n"
                 result_data['response_text'] = response_text
                 return result_data
+
+            else:
+                error_message = response.json().get("detail", "Unknown error")
+                result_data = {
+                    "count": 0,
+                    "pages": 0,
+                    "response_text": f"Ошибка при получении данных: {error_message}"
+                }
+                return result_data
+
         except requests.exceptions.RequestException as ex:
             print(f"Проблема с получением данных: {ex}")
 
